@@ -22,12 +22,17 @@ cd AM_U_Net
 conda env create -f environment.yml
 ```
 
-### 4. Download Datasets
+### 4. Activate Conda Environment
+```bash
+conda activate am_unet
+```
+
+### 5. Download Datasets
 ```bash
 bash download_datasets.sh
 ```
 
-### 5. Train and Test on the DRIVE Dataset
+### 6. Train and Test on the DRIVE Dataset
 ```bash
 python main.py --model AM_U_Net --dataset DRIVE --batch_size 16 --learning_rate 0.001 --max_epochs 500 --patience 10 --image_size 512
 ```
