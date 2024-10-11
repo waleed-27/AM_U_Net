@@ -1,0 +1,8 @@
+# Ignore weights folder
+weights/
+
+# Ignore Python cache folders
+__pycache__/
+
+# Ignore datasets folder
+datasets/
