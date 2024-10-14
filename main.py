@@ -41,6 +41,7 @@ def main():
     ])
 
     # Determine the dataset paths based on the chosen dataset
+    # Determine the dataset paths based on the chosen dataset
     dataset_paths = {
         "DRIVE": {
             "image_dir": "datasets/DRIVE/training/images",
@@ -55,30 +56,34 @@ def main():
             "test_mask_dir": "datasets/stare/test/mask"
         },
         "HRF": {
-            "image_dir": "datasets/hrf/training/images",
-            "mask_dir": "datasets/hrf/training/mask",
+            "image_dir": "datasets/hrf/images",
+            "mask_dir": "datasets/hrf/mask",
             "test_image_dir": "datasets/hrf/test/images",
             "test_mask_dir": "datasets/hrf/test/mask"
         },
         "CHASE": {
-            "image_dir": "datasets/chase/training/images",
-            "mask_dir": "datasets/chase/training/mask",
+            "image_dir": "datasets/chase",
+            "mask_dir": "datasets/chase",
             "test_image_dir": "datasets/chase/test/images",
             "test_mask_dir": "datasets/chase/test/mask"
         }
     }
 
     # Create datasets using the provided paths for the chosen dataset
-    train_dataset = RetinalDataset(image_dir=dataset_paths[args.dataset]["image_dir"],
+    train_dataset = RetinalDataset(dataset_type=args.dataset,
+      image_dir=dataset_paths[args.dataset]["image_dir"],
                                    mask_dir=dataset_paths[args.dataset]["mask_dir"],
                                    transform=transform)
 
-    test_dataset = RetinalDataset(image_dir=dataset_paths[args.dataset]["test_image_dir"],
-                                  mask_dir=dataset_paths[args.dataset]["test_mask_dir"],
-                                  transform=transform)
+    if args.dataset == 'DRIVE':
+
+      test_dataset = RetinalDataset(image_dir=dataset_paths[args.dataset]["test_image_dir"],
+                                    mask_dir=dataset_paths[args.dataset]["test_mask_dir"],
+                                    transform=transform)
+                                    
+      test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
     # Criterion and optimizer
     criterion = JaccardLoss()
