@@ -6,11 +6,14 @@ import numpy as np
 import cv2 
 
 class RetinalDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, transform=None):
+    def __init__(self,dataset_type, image_dir, mask_dir, transform=None):
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.transform = transform
-        self.images = sorted(os.listdir(image_dir))
+        self.dataset_type=dataset_type
+
+        self.images = sorted([f for f in os.listdir(image_dir) if f.endswith(('.JPG', '.jpg', '.tif'))])
+
         self.masks = sorted(os.listdir(mask_dir))
 
     def __len__(self):
@@ -34,9 +37,19 @@ class RetinalDataset(Dataset):
         return Image.fromarray(rgb_image)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.image_dir, self.images[idx])
-        mask_path = os.path.join(self.mask_dir, self.masks[idx])
-        
+        if self.dataset_type == 'CHASE':
+            # For CHASE dataset, use the corresponding 1stHO mask
+            img_path = os.path.join(self.image_dir, self.images[idx])
+            
+            # Adjusting to get the correct 1stHO mask
+            image_name = os.path.splitext(self.images[idx])[0]  # Get image name without extension
+            mask_name = f"{image_name}_1stHO.png"  # Assumes mask is in PNG format with _1stHO suffix
+            mask_path = os.path.join(self.mask_dir, mask_name)
+        else:
+            # For other datasets, use the normal way
+            img_path = os.path.join(self.image_dir, self.images[idx])
+            mask_path = os.path.join(self.mask_dir, self.masks[idx])
+
         image = Image.open(img_path).convert("RGB")
         mask = Image.open(mask_path).convert("L")
 
