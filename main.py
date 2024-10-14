@@ -77,7 +77,7 @@ def main():
 
     if args.dataset == 'DRIVE':
 
-      test_dataset = RetinalDataset(image_dir=dataset_paths[args.dataset]["test_image_dir"],
+      test_dataset = RetinalDataset(dataset_type=args.dataset,image_dir=dataset_paths[args.dataset]["test_image_dir"],
                                     mask_dir=dataset_paths[args.dataset]["test_mask_dir"],
                                     transform=transform)
                                     
