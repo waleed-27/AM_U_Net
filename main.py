@@ -63,7 +63,7 @@ def main():
         },
         "HRF": {
             "image_dir": "datasets/hrf/images",
-            "mask_dir": "datasets/hrf/mask",
+            "mask_dir": "datasets/hrf/manual1",
             "test_image_dir": "datasets/hrf/test/images",
             "test_mask_dir": "datasets/hrf/test/mask"
         },
