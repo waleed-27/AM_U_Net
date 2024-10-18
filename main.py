@@ -51,13 +51,13 @@ def main():
     dataset_paths = {
         "DRIVE": {
             "image_dir": "datasets/DRIVE/training/images",
-            "mask_dir": "datasets/DRIVE/training/mask",
+            "mask_dir": "datasets/DRIVE/training/1st_manual",
             "test_image_dir": "datasets/DRIVE/test/images",
-            "test_mask_dir": "datasets/DRIVE/test/mask"
+            "test_mask_dir": "datasets/DRIVE/test/1st_manual"
         },
         "STARE": {
             "image_dir": "datasets/stare/training/images",
-            "mask_dir": "datasets/stare/training/mask",
+            "mask_dir": "datasets/stare/training/manual1",
             "test_image_dir": "datasets/stare/test/images",
             "test_mask_dir": "datasets/stare/test/mask"
         },
@@ -75,14 +75,6 @@ def main():
         }
     }
 
-    # Create datasets using the provided paths for the chosen dataset
-    train_dataset = RetinalDataset(dataset_type=args.dataset,
-      image_dir=dataset_paths[args.dataset]["image_dir"],
-                                   mask_dir=dataset_paths[args.dataset]["mask_dir"],
-                                   transform=transform)
-
-
-
     # Function to split the dataset
     def split_dataset(dataset, train_ratio=0.7):
         # Get the indices for the dataset
@@ -99,6 +91,19 @@ def main():
 
 
 
+
+    # Create datasets using the provided paths for the chosen dataset
+    train_dataset = RetinalDataset(dataset_type=args.dataset,
+      image_dir=dataset_paths[args.dataset]["image_dir"],
+                                   mask_dir=dataset_paths[args.dataset]["mask_dir"],
+                                   transform=transform)
+
+
+
+
+
+
+
 # Perform the split
     train_dataset, test_dataset = split_dataset(train_dataset, train_ratio=0.7)
 
@@ -108,14 +113,6 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
-
-    if args.dataset == 'DRIVE':
-
-      test_dataset = RetinalDataset(dataset_type=args.dataset,image_dir=dataset_paths[args.dataset]["test_image_dir"],
-                                    mask_dir=dataset_paths[args.dataset]["test_mask_dir"],
-                                    transform=transform)
-                                    
-      test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
 
 
