@@ -9,6 +9,12 @@ from loss import JaccardLoss
 from train_test import train, test
 from torch.utils.data import DataLoader 
 from torchvision import transforms
+import os
+import random
+from math import floor
+from sklearn.model_selection import train_test_split
+from torch.utils.data import Subset
+
 
 # Argument parser
 def parse_args():
@@ -75,6 +81,34 @@ def main():
                                    mask_dir=dataset_paths[args.dataset]["mask_dir"],
                                    transform=transform)
 
+
+
+    # Function to split the dataset
+    def split_dataset(dataset, train_ratio=0.7):
+        # Get the indices for the dataset
+        indices = list(range(len(dataset)))
+        
+        # Split the indices into train and test sets (70% train, 30% test)
+        train_indices, test_indices = train_test_split(indices, train_size=train_ratio, random_state=42)
+
+        # Create subset datasets
+        train_dataset = Subset(dataset, train_indices)
+        test_dataset = Subset(dataset, test_indices)
+        
+        return train_dataset, test_dataset
+
+
+
+# Perform the split
+    train_dataset, test_dataset = split_dataset(train_dataset, train_ratio=0.7)
+
+# Now `train_dataset` and `test_dataset` contain 70% and 30% of the images, respectively
+
+
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+
+
     if args.dataset == 'DRIVE':
 
       test_dataset = RetinalDataset(dataset_type=args.dataset,image_dir=dataset_paths[args.dataset]["test_image_dir"],
@@ -83,7 +117,7 @@ def main():
                                     
       test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+
 
     # Criterion and optimizer
     criterion = JaccardLoss()
