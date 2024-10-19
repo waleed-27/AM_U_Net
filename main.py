@@ -31,6 +31,20 @@ def parse_args():
     
     return parser.parse_args()
 
+# Function to split the dataset
+def split_dataset(dataset, train_ratio=0.7):
+    # Get the indices for the dataset
+    indices = list(range(len(dataset)))
+    
+    # Split the indices into train and test sets (70% train, 30% test)
+    train_indices, test_indices = train_test_split(indices, train_size=train_ratio, random_state=42)
+
+    # Create subset datasets
+    train_dataset = Subset(dataset, train_indices)
+    test_dataset = Subset(dataset, test_indices)
+    
+    return train_dataset, test_dataset
+
 def main():
     # Parse arguments
     args = parse_args()
@@ -46,7 +60,6 @@ def main():
         transforms.ToTensor()
     ])
 
-    # Determine the dataset paths based on the chosen dataset
     # Determine the dataset paths based on the chosen dataset
     dataset_paths = {
         "DRIVE": {
@@ -75,46 +88,19 @@ def main():
         }
     }
 
-    # Function to split the dataset
-    def split_dataset(dataset, train_ratio=0.7):
-        # Get the indices for the dataset
-        indices = list(range(len(dataset)))
-        
-        # Split the indices into train and test sets (70% train, 30% test)
-        train_indices, test_indices = train_test_split(indices, train_size=train_ratio, random_state=42)
-
-        # Create subset datasets
-        train_dataset = Subset(dataset, train_indices)
-        test_dataset = Subset(dataset, test_indices)
-        
-        return train_dataset, test_dataset
-
-
-
-
     # Create datasets using the provided paths for the chosen dataset
     train_dataset = RetinalDataset(dataset_type=args.dataset,
       image_dir=dataset_paths[args.dataset]["image_dir"],
                                    mask_dir=dataset_paths[args.dataset]["mask_dir"],
                                    transform=transform)
 
-
-
-
-
-
-
-# Perform the split
+    # Perform the split
     train_dataset, test_dataset = split_dataset(train_dataset, train_ratio=0.7)
 
-# Now `train_dataset` and `test_dataset` contain 70% and 30% of the images, respectively
-
+    # Now `train_dataset` and `test_dataset` contain 70% and 30% of the images, respectively
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
-
-
-
 
     # Criterion and optimizer
     criterion = JaccardLoss()
