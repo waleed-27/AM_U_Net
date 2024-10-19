@@ -3,7 +3,7 @@ import os
 import torch
 import torch.optim as optim
 from tqdm import tqdm
-from models import AM_U_Net, R2_AM_U_Net
+from models import AM_U_Net, R2_AM_U_Net, init_weights
 from dataset import RetinalDataset
 from loss import JaccardLoss
 from train_test import train, test
@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("--patience", type=int, default=10, help="Patience for early stopping")
     parser.add_argument("--image_size", type=int, default=512, help="Size of the input images")
     parser.add_argument("--checkpoint", type=str, default=None, help="Path to the checkpoint file")
+    parser.add_argument("--init_type", choices=["normal", "xavier", "kaiming", "orthogonal"], default="normal", help="Type of weight initialization")
     
     return parser.parse_args()
 
@@ -54,6 +55,9 @@ def main():
         model = AM_U_Net()
     elif args.model == "R2_AM_U_Net":
         model = R2_AM_U_Net()
+
+    # Apply the weight initialization function
+    init_weights(model, init_type=args.init_type)
 
     transform = transforms.Compose([
         transforms.Resize((args.image_size, args.image_size)),
